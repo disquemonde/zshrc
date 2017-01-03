@@ -1,5 +1,3 @@
-VPS="149.56.12.120"
-
 autoload -U compinit
 compinit
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
