@@ -2,7 +2,7 @@ autoload -U compinit
 compinit
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
 zstyle ':completion:*:warnings' format '% Pas de résultats pour : %d%b'
-zstyle ':completion:*' menu select=2
+zstyle ':completion:*' menu select=1
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
                              /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
@@ -33,7 +33,6 @@ setopt correctall
 
 #binkey
 bindkey -e
-
 bindkey "\e[H" beginning-of-line # Début
 bindkey "\e[F" end-of-line # Fin
 bindkey "\e[3~" delete-char
@@ -45,18 +44,49 @@ bindkey "\e\e[D" backward-word
 bindkey "\e[1;5C" forward-word
 bindkey "\e[1;5D" backward-word
 
-
-
-#---ALI0AS------------------------------------------------------------------------
-alias ls='ls --color=auto'
-alias ll='ls --color=auto -lh'
+#alias ls='ls --color=auto'
+alias ls='colorls'
+#alias ll='ls --color=auto -lh'
+alias ll='colorls -l'
 alias lll='ls --color=auto -lh | less'
 alias la='ls --color=auto -A'
 alias s='sudo'
+alias systemctl='sudo systemctl'
+##PACMAN:
+alias pi='sudo pacman -S'
+alias pr='sudo pacman -R'
+alias prs='sudo pacman -Rs'
+alias prsn='sudo pacman -Rsn'
+alias pss='sudo pacman -Ss'
+alias psu='sudo pacman -Syu'
+alias packinstall='sudo pacman -S'
+alias packremove='sudo pacman -R'
+alias packsearsh='sudo pacaur -Ss'
+alias packupgrade='pacaur -Syyu --noconfirm'
+alias packupgrade-all='pacaur -Syyu --noconfirm && for dir in $(find /home/jb/SysAdmin/Softs -name ".git"); do cd ${dir%/*}; git pull; cd -; done '
+##DIVERS
+alias home="sudo cryptsetup luksOpen /dev/sdb1 home_crypt &&  sudo mount /dev/mapper/home_crypt /home/jb/home_ext"
 alias rm='rm -i'
+alias youtube-dl-audio='youtube-dl --extract-audio --audio-format mp3'
 alias genpasswd='tr -dc '\x15-\x7e' < /dev/urandom| head -c 8 | paste'
+alias putain='echo "ça va, ça va...";sleep 5;clear;echo "Calme-toi! "; sleep 3 '
 alias ccat='pygmentize -g'
-
+alias partagehttp='python3 -m http.server'
+alias rgrep='grep  -n -I -R -r'
+alias fgrep='grep  -n -I'
+#MIME
+alias -s pdf="evince "
+alias -s mkv="vlc "
+alias -s avi="vlc "
+alias -s mp4="vlc "
+alias -s m3u="vlc "
+alias -s txt="mousepade"
+#GREP
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+#Systemctl
+alias service='sudo systemctl'
+# Regular Colors
 Black='\e[0;30m'        # Black
 Red='\e[0;31m'          # Red
 Green='\e[0;32m'        # Green
@@ -68,25 +98,47 @@ White='\e[0;37m'        # White
 
 #grep colors
 export GREP_COLOR=31
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
 
-
-
-#--PS1---------------------------------------------------------------------------
+#editeur de txt
+export EDITOR=/usr/bin/vim
 
 PROMPT=$'
- %{\e[1;38;5;196m%}%n@%M %{\e[0;36m%}[%~]%{\e[0m%} #> '
+ %{\e[01;31m%}%n %{\e[0;38m%}%~ %{\e[0m%}
+ %$⟹  '
+
+#RPROMPT=$(errval)
 RPROMPT=$'%{\e[0;33m%}%?%{\e[0m%}'
 
 
-#--FONCTIONS---------------------------------------------------------------------
 #ls automatique à cd
 xs() {
   cd "$@"
   ls
 }
 
+#hackaide
+hackaide(){
+echo ""
+echo "  maltego       =>  Analyse et recherche visuel"
+echo "  spiderfoot    =>  Analyse et recherche OSINT visuel"
+echo "  fierce        =>  Brutforce DNS"
+echo "  datasploit    =>  A tool to perform various OSINT "
+echo "  theHarvester  =>  E-mail, subdomain and people names harvester"
+}
+
+#Pacaide
+pacaide() {
+  echo ""
+  echo "    --LISTE DES ALIAS PACMAN--"
+  echo ""
+  echo "  pi    => sudo pacman -S   = Installe le pk"
+  echo "  pr    => sudo pacman -R   = Désistalle"
+  echo "  prs   => sudo pacman -Rs  = Désinstalle + dependances"
+  echo "  prsn  => sudo pacman -Rsn = Désinstalle + conf"
+  echo "  pss   => sudo pacman -Ss  = cherche un pk dans les dépots"
+  echo "  psu   => sudo pacman -Syu = syncro + mise a jour"
+  echo ""
+}
 
 destroy() {
   shred -n 4 -z -u $1
@@ -115,4 +167,37 @@ extract () {
      else
          echo "'$1' is not a valid file"
      fi
+}
+
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[path]='fg=41,underline'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=112'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=88'
+ZSH_HIGHLIGHT_STYLES[command]='fg=112'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=113'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=112'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=113'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=113'
+ZSH_HIGHLIGHT_STYLES[function]='fg=112'
+#source /usr/share/nvm/init-nvm.sh
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/jb/.vimpkg/bin:/home/jb/.gem/ruby/2.4.0/bin
+
+PATH="/home/jb/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/jb/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/jb/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/jb/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/jb/perl5"; export PERL_MM_OPT;
+
+#source $(dirname $(gem which colorls))/tab_complete.sh
+
+zle -C colorls .complete-word colorls_completion 
+bindkey '^x^i' colorls
+  
+  # define the function that will be called
+colorls_completion() {
+  compadd $(colorls --'*'-completion-bash="$2" )
 }
