@@ -1,3 +1,4 @@
+#---------------CONFIGURATION-----------------------------
 autoload -U compinit
 compinit
 zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
@@ -8,16 +9,13 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
                              /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 zstyle ':completion:*:s:*' command-path /usr/local/sbin /usr/local/bin \
                              /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
-
 #history
 export HISTSIZE=2000
 export HISTFILE="$HOME/.history"
 export SAVEHIST=$HISTSIZE
-
 #Cache
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh_cache
-
 #couleurs de completion
 zmodload zsh/complist
 setopt extendedglob
@@ -27,10 +25,8 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-
 #Correction
 setopt correctall
-
 #binkey
 bindkey -e
 bindkey "\e[H" beginning-of-line # Début
@@ -44,7 +40,7 @@ bindkey "\e\e[D" backward-word
 bindkey "\e[1;5C" forward-word
 bindkey "\e[1;5D" backward-word
 
-#alias ls='ls --color=auto'
+#---------------------------ALIAS---------------------------------
 alias ls='colorls'
 #alias ll='ls --color=auto -lh'
 alias ll='colorls -l'
@@ -52,7 +48,7 @@ alias lll='ls --color=auto -lh | less'
 alias la='ls --color=auto -A'
 alias s='sudo'
 alias systemctl='sudo systemctl'
-##PACMAN:
+#pacman
 alias pi='sudo pacman -S'
 alias pr='sudo pacman -R'
 alias prs='sudo pacman -Rs'
@@ -64,8 +60,7 @@ alias packremove='sudo pacman -R'
 alias packsearsh='sudo pacaur -Ss'
 alias packupgrade='pacaur -Syyu --noconfirm'
 alias packupgrade-all='pacaur -Syyu --noconfirm && for dir in $(find /home/jb/SysAdmin/Softs -name ".git"); do cd ${dir%/*}; git pull; cd -; done '
-##DIVERS
-alias home="sudo cryptsetup luksOpen /dev/sdb1 home_crypt &&  sudo mount /dev/mapper/home_crypt /home/jb/home_ext"
+#divers
 alias rm='rm -i'
 alias youtube-dl-audio='youtube-dl --extract-audio --audio-format mp3'
 alias genpasswd='tr -dc '\x15-\x7e' < /dev/urandom| head -c 8 | paste'
@@ -74,19 +69,14 @@ alias ccat='pygmentize -g'
 alias partagehttp='python3 -m http.server'
 alias rgrep='grep  -n -I -R -r'
 alias fgrep='grep  -n -I'
-#MIME
-alias -s pdf="evince "
-alias -s mkv="vlc "
-alias -s avi="vlc "
-alias -s mp4="vlc "
-alias -s m3u="vlc "
-alias -s txt="mousepade"
-#GREP
+alias mi='micro'
+#grep
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 #Systemctl
 alias service='sudo systemctl'
-# Regular Colors
+
+#-----------------------REGULAR COLORS----------------------
 Black='\e[0;30m'        # Black
 Red='\e[0;31m'          # Red
 Green='\e[0;32m'        # Green
@@ -95,21 +85,29 @@ Blue='\e[0;34m'         # Blue
 Purple='\e[0;35m'       # Purple
 Cyan='\e[0;36m'         # Cyan
 White='\e[0;37m'        # White
-
 #grep colors
 export GREP_COLOR=31
 
+#-----------------------VARIABLES----------------------------
 #editeur de txt
-export EDITOR=/usr/bin/vim
+export EDITOR=/usr/bin/micro
 
-PROMPT=$'
- %{\e[01;31m%}%n %{\e[0;38m%}%~ %{\e[0m%}
- %$⟹  '
+#-----------------------PROMPTS------------------------------
+function exitstatus(){
+	if [[ $? == 0 ]];then
+		print '%F{green}•%f'
+	else 
+		print '%F{red}•%f'
+	fi
+}
+setopt promptsubst
+#RPROMPT='%K{yellow}%F{black} %~ %f%k'
+NEWLINE=$'\n'
+PROMPT='${NEWLINE}%F{cyan}%n%f${NEWLINE}$(exitstatus) ' RPROMPT='%K{yellow}%F{black} %~ %f%k'
+#PROMPT='${NEWLINE}%F{cyan}%n%f${NEWLINE}' RPROMPT='%K{yellow}%F{black} %~ %f%k'
+#'$(exitstatus) '
 
-#RPROMPT=$(errval)
-RPROMPT=$'%{\e[0;33m%}%?%{\e[0m%}'
-
-
+#----------------------FONCTIONS-----------------------------
 #ls automatique à cd
 xs() {
   cd "$@"
@@ -169,9 +167,9 @@ extract () {
      fi
 }
 
+#------------------------PIMP ZSH !---------------------------------------------------
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-
 typeset -A ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES[path]='fg=41,underline'
 ZSH_HIGHLIGHT_STYLES[alias]='fg=112'
